@@ -3,8 +3,39 @@ import logo from "./assets/logo.png";
 import img1 from"./assets/img1.png";
 import img2 from"./assets/img2.png";
 import img3 from"./assets/img3.png";
-import { Link} from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
+import {useState} from "react" ;
 const Login = () => {
+  
+  let navigate=     useNavigate()
+  let [formData,SetFormData]=useState({
+    email:"",
+    passWord:""
+  })          
+  function handleForm(e){
+    let {name,value}=e.target
+    SetFormData({
+      ...formData,[name]:value
+    })
+  }
+
+    async  function handleSubmit(e){
+        
+    e.preventDefault()
+
+        let res=   await axios.post("http://localhost:4000/login",formData)
+        // console.log(res.data);
+        let loginData=res.data
+        let SingUpData=   localStorage.getItem("user")
+           let realData=    JSON.parse(SingUpData)
+        console.log(realData);
+
+        if(loginData.email==realData.email  && loginData.passWord==realData.passWord){
+            navigate('/home')
+
+        }else{
+            navigate("/")
+        }}
   return (
   <div className="bg-black h-screen flex justify-center items-center">
       {/* <div className="h-[470px] w-60 mr-[400px] mb-[45px] bg-amber-50 rounded-[35px] fixed">
@@ -28,9 +59,9 @@ const Login = () => {
           <img src={logo} className="h-30 ml-4"></img>
           <div className="absolute h-[480px] w-[300px] mt-25 ml-[90px]" >
             <form className="flex  flex-col gap-1 justify-center">
-      <input type="text"  placeholder="phone number,e-mail,username"
+      <input name='email' value={formData.email}  onChange={handleForm} type="email"  placeholder="phone number,e-mail,username"
       className=" rounded-[5px] border-1 border-gray-600 text-white bg-gray-900 w-55 px-2 py-0.5 placeholder:text-sm "></input>
-      <input type="password" placeholder="password"
+      <input  name='passWord' value={formData.passWord}  onChange={handleForm} type="password" placeholder="password"
       className=" rounded-[5px] border-1 border-gray-600 text-white bg-gray-900 w-55 px-2 py-0.5 placeholder:text-sm "></input>
      <button type="submit "  className="border-1 border-indigo-600 bg-indigo-700 hover:bg-indigo-600 text-white w-55 mt-[12px] px-2 py-0.5 rounded-[5px]"><Link to="/home">Login</Link></button> 
      </form>
