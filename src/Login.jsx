@@ -38,15 +38,7 @@ const Login = () => {
         }}
   return (
   <div className="bg-black h-screen flex justify-center items-center">
-      {/* <div className="h-[470px] w-60 mr-[400px] mb-[45px] bg-amber-50 rounded-[35px] fixed">
-        <img src={insta2} className="h-[470px] w-60 rounded-[35px] "></img>
-      </div>
-      <div className="h-[480px] w-60 mr-[200px] rounded-[25px]  absolute">
-        <img
-          src={insta}
-          className="h-[480px] w-60 rounded-[30px] mr-[200px]"
-        ></img>
-      </div> */}
+  
       <div className="absolute h-[480px] w-60 mr-[480px] mt-5" >
         <img src={img2} className=" -rotate-7 rounded-[20px] h-[290px] w-40 mt-[40px]"></img></div>
       <div className=" absolute h-[480px] w-60 mt-5">

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react' 
-import axios from 'axios'
+import axios from 'axios';
 const Signup = () => {
   let [formData,SetFormData]=useState({
     name:"",
@@ -44,30 +44,52 @@ const Signup = () => {
     
   }
 
-  // {
-  //   name:"rimi",
-  //   passWord:"123"    
-  // }
-  // {
-  //   "name":"123",
-  //   "dsifwi":2423
-  // }
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input  name='name' value={formData.name}  onChange={handleForm} type='text' placeholder='Name'/>
-        <br></br>
-        <br></br>
-        <input  name='email' value={formData.email}  onChange={handleForm} type='email' placeholder='Name'/>
-        <br></br>
-        <br></br>
-        <input   name='passWord' value={formData.passWord}  onChange={handleForm} type='password' placeholder='password'/>
-        <br></br>
-        <br></br>
-        <button type='submit'> AddData</button>
+ <div className="flex justify-center items-center min-h-screen bg-gray-100">
+  <form 
+    onSubmit={handleSubmit} 
+    className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md"
+  >
+    <h2 className="text-2xl font-bold text-center mb-6 text-gray-700">
+      Sign Up
+    </h2>
 
-      </form>
-    </div>
+    <input 
+      name="name" 
+      value={formData.name}  
+      onChange={handleForm} 
+      type="text" 
+      placeholder="Name"
+      className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+    />
+
+    <input  
+      name="email" 
+      value={formData.email}  
+      onChange={handleForm} 
+      type="email" 
+      placeholder="Email"
+      className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+    />
+
+    <input   
+      name="passWord" 
+      value={formData.passWord}  
+      onChange={handleForm} 
+      type="password" 
+      placeholder="Password"
+      className="w-full px-4 py-2 mb-6 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+    />
+
+    <button 
+      type="submit" 
+      className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200"
+    >
+      Add Data
+    </button>
+  </form>
+</div>
+
   )
 }
 

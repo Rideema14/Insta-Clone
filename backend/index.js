@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt')
 let express= require("express")
  let app= express()
  let fs= require('fs')
@@ -29,11 +30,6 @@ let express= require("express")
 
  })
 
-//  app.patch("/edit",(req,res)=>{
-//   let dataForEdit=   req.body
-//         fs.appendFileSync("index.html",dataForEdit.msg)
-//         res.send("file was updatededddddddddd")
-//  })
 
  app.listen(4000,()=>{
   console.log("server running on port no 4000");
@@ -111,3 +107,22 @@ app.post("/signUp",  async(req,res)=>{
            }
 
 })
+const sendOtp = require('./twilioService'); // Twilio service to send OTP
+// const Otp = require('./model/otp');
+app.post('/send-otp', async (req, res) => {
+  const { phoneNumber } = req.body;
+
+
+  const otp = Math.floor(100000 + Math.random() * 900000);
+
+  try {
+    await sendOtp(phoneNumber, otp);
+    res.status(200).send({ message: 'OTP sent successfully', otp });
+  } catch (error) {
+    res.status(500).send({ error: 'Failed to send OTP' });
+  }
+});
+
+app.listen(1000, () => {
+  console.log('Server is running on port 1000');
+});
