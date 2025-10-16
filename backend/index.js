@@ -11,7 +11,7 @@ let express= require("express")
  app.get('/',(req,res)=>{
   // res.send("hello")
   //  let data=   fs.readFileSync("index.html")
-   res.send(data.toString())
+  //  res.send(data.toString())
 
  })
  app.post("/create",(req,res)=>{
@@ -31,11 +31,11 @@ let express= require("express")
  })
 
 
- app.listen(4000,()=>{
-  console.log("server running on port no 4000");
+//  app.listen(4000,()=>{
+//   console.log("server running on port no 4000");
   
   
- })
+//  })
 
 
 //  http://localhost:5173 =>REACT
@@ -81,10 +81,9 @@ res.send({ msg: "User registered" });
 
 
 })
-app.listen(4000, () => {
-  console.log("server running on port no 4000");
 
-})
+
+
 app.post("/signUp",  async(req,res)=>{
        
        let {name,email,passWord}=      req.body
@@ -107,6 +106,33 @@ app.post("/signUp",  async(req,res)=>{
            }
 
 })
+app.post("/login", async(req,res)=>{
+
+  let secretKey="JDNFNHIUWHFIWWIU"
+
+  let {email,passWord}=req.body
+        
+           let user = await User.findOne({email})
+           if(!user){
+            return res.send({msg:"User not found"})
+           }
+           else{
+            
+               let isMatch = await bcrypt.compare(passWord,user.passWord)
+               if(!isMatch){
+                return res.send("Invalid credentials")
+               }
+              
+              let token = jwt.sign({email:user.email,role:user.role},secretKey)
+              console.log(token,"tokennn");
+              
+                   
+               return res.send(token)
+
+              //  return res.send("Login successfulyyyyy")
+
+           }
+})
 const sendOtp = require('./twilioService'); // Twilio service to send OTP
 // const Otp = require('./model/otp');
 app.post('/send-otp', async (req, res) => {
@@ -123,6 +149,24 @@ app.post('/send-otp', async (req, res) => {
   }
 });
 
-app.listen(1000, () => {
-  console.log('Server is running on port 1000');
-});
+
+// const connectDB = require('./config/db');
+let signUpRoute=require('./router/user1')
+let loginUpRoute=require('./router/login')
+let forgetRouter=require('./router/forget')
+let resetRouter=require('./router/reset')
+
+
+// connectDB()
+app.use('/api',signUpRoute)
+app.use('/api',loginUpRoute)
+app.use('/api',forgetRouter) 
+app.use('/api',resetRouter) 
+
+
+
+
+app.listen(4000,()=>{
+    console.log('server running 4000');
+    
+})
