@@ -1,6 +1,6 @@
-let express=    require('express')
-const User = require('../userModel')
- let bcrypt=require('bcrypt')
+ let express=    require('express')
+const User = require('../models/userModel')
+ let bcrypt=require('bcryptjs')
  let router=   express.Router()
  router.use(express.json())
 router.post('/create', async(req,res)=>{
@@ -36,3 +36,4 @@ router.post('/create', async(req,res)=>{
 
 
 module.exports=router
+

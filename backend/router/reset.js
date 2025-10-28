@@ -1,5 +1,6 @@
  let express=require('express');
-const User = require('../userModel');
+const User = require('../models/userModel');
+let bcrypt=require('bcryptjs');
  let router=   express.Router()
  
  router.post('/reset-password/:token', async (req, res) => {

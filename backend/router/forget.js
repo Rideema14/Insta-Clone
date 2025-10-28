@@ -1,8 +1,9 @@
  let express=  require('express')
- let User=   require('../userModel')
+ let User=   require('../models/userModel')
  let router=   express.Router()
  const crypto = require('crypto');
-let {sendEmail} = require('../sendEmail')
+ let bcrypt=require('bcryptjs');
+let {sendEmail} = require('../utils/sendEmail')
 router.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
   try {

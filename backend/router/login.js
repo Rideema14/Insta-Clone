@@ -1,8 +1,8 @@
-const User = require("../userModel");
-const router = require("./user1");
+const User = require("../models/userModel");
+const router = require("./user");
 let jwt =require('jsonwebtoken')
-let bcrypt=require('bcrypt')
-router.post('./router/login', async(req,res)=>{
+let bcrypt=require('bcryptjs')
+router.post('/login', async(req,res)=>{
     let loginData=req.body
      let data=    await User.findOne({email:loginData.email})
      console.log(data,"datata");
