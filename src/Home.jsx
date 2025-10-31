@@ -1,12 +1,13 @@
 import Logo from "./assets/logo.png";
 import Me from "./assets/me.jpg";
-import post from "./assets/post.png"
+import post from "./assets/post.png";
+import { Link } from "react-router-dom";
 const Home = () => {
   return (
     <div className="bg-black  flex flex-row ">
       <div className="  w-94  border-1 border-gray-800">
         <img src={Logo} className=" ml-7 h-[100px]"></img>
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 ">
           <div className="flex gap-6">
             <i className="ml-7 text-xl fa-solid fa-house text-white "></i>
             <span>
@@ -46,7 +47,9 @@ const Home = () => {
           <div className="flex gap-6">
             <i className=" ml-7 text-xl  text-white fa-solid fa-plus"></i>
             <span>
-              <p className="text-white text-xl">Post</p>
+             <Link to="/post">
+           <p className="text-white text-xl">Post</p>
+              </Link>
             </span>
           </div>
           <div className="flex gap-6">

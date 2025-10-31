@@ -1,6 +1,9 @@
 import Signup from "./Signup";
-import Login from "./Login";
 import Home from "./Home";
+import Login from "./Login";
+import ForgotPassword from "./ForgotPassword";
+import ResetPassword from "./ResetPassword";
+import Post from "./Post";
 
 import { Route,Routes,} from "react-router-dom";
 function App() {
@@ -10,6 +13,9 @@ function App() {
          <Route path="/" element={<Login />} />
          <Route path="/signup" element={<Signup />} />
          <Route path="/home" element={<Home/>}/>
+         <Route path="/forgot-password" element={<ForgotPassword/>}/>
+         <Route path="/reset-password/:token" element={<ResetPassword/>}/>
+         <Route path="/post" element={<Post/>}/>
        </Routes>
       
        

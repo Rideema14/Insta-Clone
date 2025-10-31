@@ -4,9 +4,11 @@ let signUpRoute=require('./router/user')
 let loginUpRoute=require('./router/login')
 let forgetRouter=require('./router/forget')
 let resetRouter=require('./router/reset')
+let cors=   require('cors');
 
 
 let app=  express()
+app.use(cors());
 
 connectDB()
 app.use('/api',signUpRoute)
