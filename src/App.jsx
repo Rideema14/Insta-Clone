@@ -3,7 +3,7 @@ import Home from "./Home";
 import Login from "./Login";
 import ForgotPassword from "./ForgotPassword";
 import ResetPassword from "./ResetPassword";
-import Post from "./Post";
+import Post from "./UploadImage";
 
 import { Route,Routes,} from "react-router-dom";
 function App() {
