@@ -10,14 +10,13 @@ const UploadImage = () => {
   const [preview, setPreview] = useState("");
   const [msg, setMsg] = useState("");
 
-  //  Handle file selection
+ 
   function handleFile(e) {
     const file = e.target.files[0];
     setImg(file);
     setPreview(URL.createObjectURL(file));
   }
 
-  // 💾 Upload image to Supabase
   async function save() {
     if (!img) {
       setMsg("⚠️ Please select an image first!");
