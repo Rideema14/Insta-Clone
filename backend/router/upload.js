@@ -10,8 +10,10 @@ upload.post("/upload", async (req, res) => {
       return res.status(400).json({ message: "Image URL is required" });
     }
 
-    const saved = await Upload.create({imageUrl});
-
+    // const saved = await Upload.create({imageUrl});
+// new Upload({ imageUrl });
+    const uploadInstance = new Upload({ imageUrl });
+    const saved = await uploadInstance.save();
     res.json({
       success: true,
       message: " Image URL stored successfully",
