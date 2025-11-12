@@ -1,8 +1,14 @@
 const mongoose = require("mongoose");
 
 const uploadSchema = new mongoose.Schema({
-
-  imageUrl: { type: String, required: true }
+  imageUrl: {
+    type: String,
+    required: true
+  },
+  likeCount: {
+    type: Number,
+    default: 0
+  }
 });
 
 module.exports = mongoose.model("Upload", uploadSchema);

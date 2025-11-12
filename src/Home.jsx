@@ -5,18 +5,37 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 const Home = () => {
-const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
 
-useEffect(() => {
-  axios.get("http://localhost:3000/api/uploaded")
-    .then((res) => {
-      console.log("Fetched Images:", res.data);
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/uploaded")
+      .then((res) => {
+        console.log("Fetched Images:", res.data);
+        setPosts(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+ const [liked, setLiked] = useState({}); // store liked state per post
+
+ const toggleLike = async (index, id) => {
+    try {
+      // 1️⃣ toggle locally for instant feedback
+      setLiked((prev) => ({
+        ...prev,
+        [index]: !prev[index],
+      }));
+
+      // 2️⃣ send like request to backend
+      await axios.post(`http://localhost:3000/api/like/${id}`);
+
+      // 3️⃣ refresh posts to update like count
+      const res = await axios.get("http://localhost:3000/api/uploaded");
       setPosts(res.data);
-    })
-    .catch(err => console.log(err));
-}, []);
-
-
+    } catch (err) {
+      console.error("Error liking post:", err);
+    }
+};
   return (
     <div className="bg-black  flex flex-row ">
       <div className="  w-94  border-1 border-gray-800">
@@ -139,46 +158,30 @@ useEffect(() => {
           </div>
         </div>
         <div className="ml-[140px] w-[480px] h-[520px] flex flex-col gap-3 overflow-y-scroll scrollbar-hide whitespace-nowrap">
-
-
- {posts.map((item, index) => (
-    <div key={index} className="relative w-[400px] h-[520px] flex-shrink-0">
-      
-      <img
-        className="absolute w-[400px] h-[520px] rounded-[40px]"
-        src={post}
-        alt="Post"
-      />
-
-      <img
-        className="mt-11 absolute w-[400px] h-[350px]"
-        src={item?.imageUrl}
-        alt="Post"
-      />
-
-    </div>
-  ))}
-
-
-
- 
-  <div className="relative w-[400px] h-[520px] flex-shrink-0">
-    <img className="absolute w-[400px] h-[520px] rounded-[40px]" src={post} />
-    <img className="mt-11 absolute w-[400px] h-[350px]" src="/profile1.png" />
-  </div>
-
-  <div className="relative w-[400px] h-[520px] flex-shrink-0">
-    <img className="absolute w-[400px] h-[520px] rounded-[40px]" src={post} />
-    <img className="mt-11 absolute w-[400px] h-[350px]" src="/profile2.png" />
-  </div>
-
-  <div className="relative w-[400px] h-[520px] flex-shrink-0">
-    <img className="absolute w-[400px] h-[520px] rounded-[40px]" src={post} />
-    <img className="mt-11 absolute w-[400px] h-[350px]" src="/profile3.png" />
-  </div>
+          {posts.map((item, index) => (
+            <div
+              key={index}
+              className="relative w-[400px] h-[520px] flex-shrink-0"
+            >
+              <img
+                className="absolute w-[400px] h-[520px] rounded-[40px]"
+                src={post}
+                alt="Post"
+              />
   
-</div>
+              <img
+                className="mt-11 absolute w-[400px] h-[350px]"
+                src={item?.imageUrl}
+                alt="Post"
+              />
+             <i
+            onClick={() => toggleLike(index)}
+            className={`absolute bottom-22.5 left-3.5 text-2xl cursor-pointer transition-all duration-300
+             ${liked[index] ? "fa-solid fa-heart text-red-600 scale-110" : "fa-regular fa-heart text-white"}`}></i>
 
+            </div>
+          ))}
+        </div>
       </div>
       <div className=" w-96 ">
         <div className="flex gap-1">
