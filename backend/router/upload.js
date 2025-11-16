@@ -5,18 +5,26 @@ const upload = express.Router();
 
 upload.post("/upload", async (req, res) => {
   try {
-    const {imageUrl} = req.body;
+    const { imageUrl, username } = req.body;
+
     if (!imageUrl) {
       return res.status(400).json({ message: "Image URL is required" });
     }
 
-    // const saved = await Upload.create({imageUrl});
-// new Upload({ imageUrl });
-    const uploadInstance = new Upload({ imageUrl });
+    if (!username) {
+      return res.status(400).json({ message: "Username is required" });
+    }
+
+    const uploadInstance = new Upload({
+      imageUrl,
+      username
+    });
+
     const saved = await uploadInstance.save();
+
     res.json({
       success: true,
-      message: " Image URL stored successfully",
+      message: "Image URL stored successfully",
       data: saved
     });
 
@@ -25,6 +33,8 @@ upload.post("/upload", async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
+
 
 upload.get("/uploaded", async(req, res)=>{
   try {

@@ -1,11 +1,11 @@
 import Logo from "./assets/logo.png";
 import Me from "./assets/me.jpg";
-import post from "./assets/post.png";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 const Home = () => {
   const [posts, setPosts] = useState([]);
+  const username = localStorage.getItem("username");
 
   useEffect(() => {
     axios
@@ -16,25 +16,25 @@ const Home = () => {
       })
       .catch((err) => console.log(err));
   }, []);
- const [liked, setLiked] = useState({}); // store liked state per post
 
- const toggleLike = async (index, id) => {
-    try {
-      // 1️⃣ toggle locally for instant feedback
-      setLiked((prev) => ({
-        ...prev,
-        [index]: !prev[index],
-      }));
+const toggleLike = async (index, id) => {
+  try {
+   
+    await axios.post(`http://localhost:3000/api/like/${id}`);
 
-      // 2️⃣ send like request to backend
-      await axios.post(`http://localhost:3000/api/like/${id}`);
-
-      // 3️⃣ refresh posts to update like count
-      const res = await axios.get("http://localhost:3000/api/uploaded");
-      setPosts(res.data);
-    } catch (err) {
-      console.error("Error liking post:", err);
-    }
+    setPosts((prevPosts) =>
+      prevPosts.map((post, i) =>
+        i === index ? { ...post, likes: (post.likes || 0) + 1 } : post
+      )
+    );
+  } catch (err) {
+    console.error("Error liking post:", err);
+  }
+};
+const logout = () => {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("username");
+  navigate("/");
 };
   return (
     <div className="bg-black  flex flex-row ">
@@ -159,15 +159,22 @@ const Home = () => {
         </div>
         <div className="ml-[140px] w-[480px] h-[520px] flex flex-col gap-3 overflow-y-scroll scrollbar-hide whitespace-nowrap">
           {posts.map((item, index) => (
+           
             <div
               key={index}
               className="relative w-[400px] h-[520px] flex-shrink-0"
             >
-              <img
+                {/* USERNAME DISPLAY */}
+ 
+  <div className="text-white text-md font-bold absolute top-0  bg-[url('/unknown.png')]  bg-cover  h-[30px] w-[30px] rounded-[50%] ">
+         <p className="ml-9 top-3">{username || "Unknown"}</p> </div>
+
+
+              {/* <img
                 className="absolute w-[400px] h-[520px] rounded-[40px]"
                 src={post}
                 alt="Post"
-              />
+              /> */}
   
               <img
                 className="mt-11 absolute w-[400px] h-[350px]"
@@ -175,12 +182,17 @@ const Home = () => {
                 alt="Post"
               />
              <i
-            onClick={() => toggleLike(index)}
-            className={`absolute bottom-22.5 left-3.5 text-2xl cursor-pointer transition-all duration-300
-             ${liked[index] ? "fa-solid fa-heart text-red-600 scale-110" : "fa-regular fa-heart text-white"}`}></i>
-
+            onClick={() => toggleLike(index, item._id)}
+            className=" absolute bottom-22.5 left-3.5 text-2xl fa-solid fa-heart text-red-600 cursor-pointer transition-all duration-300"></i>
+             <span className= " absolute bottom-17 left-3.5 text-l text-white ">
+                 {item.likes || 0} likes
+           </span>
+        <i className="absolute text-2xl bottom-22 left-13  text-white fa-regular fa-comment"></i>
+        <i className=" absolute bottom-22 left-22.5 text-2xl fa-regular fa-paper-plane text-white cursor-pointer transition-all duration-300"></i>
+        <i className=" absolute bottom-22.5 right-3.5 text-2xl fa-regular fa-bookmark text-white cursor-pointer transition-all duration-300"></i>
             </div>
-          ))}
+          )
+          )}
         </div>
       </div>
       <div className=" w-96 ">

@@ -6,6 +6,7 @@ like.post("/like/:id", async (req, res) => {
   try {
     const postId = req.params.id;
 
+    console.log("LIKING POST ID:", postId);
     const post = await Upload.findById(postId);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });

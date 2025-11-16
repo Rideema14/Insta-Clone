@@ -8,7 +8,10 @@ const uploadSchema = new mongoose.Schema({
   likeCount: {
     type: Number,
     default: 0
-  }
+  },
+   username: { 
+    type: String, 
+    required: false }
 });
 
 module.exports = mongoose.model("Upload", uploadSchema);

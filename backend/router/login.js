@@ -13,7 +13,7 @@ router.post('/login', async(req,res)=>{
                        let token=   jwt.sign({email:data.email,role:data.role},'jdsbfiuwhfiuwhfwuif',{expiresIn:'1h'})
                        console.log(token);
                        
-                   return res.status(200).send(token)
+                   return res.status(200).json({token,data})
                  }
                  else{
                     res.send('InvalidPssssss')

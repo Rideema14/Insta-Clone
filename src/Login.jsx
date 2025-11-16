@@ -29,12 +29,16 @@ const Login = () => {
     try {
       const res = await axios.post("http://localhost:3000/api/login", formData);
       const token = res.data;
-
+      console.log(res ,"fffff");
       // ✅ Save token in localStorage
       localStorage.setItem("authToken", token);
+      localStorage.setItem("userData", JSON.stringify(res.data.data));
 
       setErrorMsg("");
-      navigate("/home"); // ✅ Login success
+      navigate("/home");
+      localStorage.setItem("username", res.data.data.userName);
+
+ // ✅ Login success
     } catch (err) {
       setErrorMsg("Invalid email or password");
     }

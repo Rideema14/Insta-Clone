@@ -19,48 +19,55 @@ let navi =useNavigate();
     setPreview(URL.createObjectURL(file));
   }
 
-  async function save() {
-    if (!img) {
-      setMsg("⚠️ Please select an image first!");
+ async function save() {
+  if (!img) {
+    setMsg("⚠️ Please select an image first!");
+    return;
+  }
+
+  try {
+    const fileName = `${Date.now()}-${img.name}`;
+    console.log("Uploading:", fileName);
+
+    // Get username from localStorage
+    const username = localStorage.getItem("username") || "Unknown";
+
+    // First tell backend the URL + username
+    axios.post("http://localhost:3000/api/upload", {
+      imageUrl: `https://pytlprimxjyljibgfoqd.supabase.co/storage/v1/object/public/post_images/insta_images/${fileName}`,
+      username: JSON.parse(localStorage.getItem("userData")).userName
+    }).then((res)=>{
+      console.log(res.data);
+    })
+
+    // Upload to Supabase
+    const { error } = await supabase.storage
+      .from("post_images") 
+      .upload(`insta_images/${fileName}`, img);
+
+    if (error) {
+      console.error("Upload error:", error);
+      setMsg("❌ Upload failed!");
       return;
     }
 
-    try {
-      const fileName = `${Date.now()}-${img.name}`;
-      console.log("Uploading:", fileName);
+    const { data: publicUrlData } = supabase.storage
+      .from("post_images")
+      .getPublicUrl(`insta_images/${fileName}`);
 
-      axios.post("http://localhost:3000/api/upload", {
-        imageUrl: `https://pytlprimxjyljibgfoqd.supabase.co/storage/v1/object/public/post_images/insta_images/${fileName}`
-      }).then((res)=>{
-        console.log(res.data);
-      })
-      const { error } = await supabase.storage
-        .from("post_images") 
-        .upload(`insta_images/${fileName}`, img);
+    const imageUrl = publicUrlData.publicUrl;
+    console.log("✅ Uploaded Image URL:", imageUrl);
 
-      if (error) {
-        console.error("Upload error:", error);
-        setMsg("❌ Upload failed!");
-        return;
-      }
-
-      //  Get public URL
-      const { data: publicUrlData } = supabase.storage
-        .from("post_images")
-        .getPublicUrl(`insta_images/${fileName}`);
-
-      const imageUrl = publicUrlData.publicUrl;
-      console.log("✅ Uploaded Image URL:", imageUrl);
-
-      setMsg("✅ Image uploaded successfully!");
-      navi("/home");
-      setImg("");
-      setPreview("");
-    } catch (err) {
-      console.error("Error:", err);
-      setMsg("❌ Something went wrong.");
-    }
+    setMsg("✅ Image uploaded successfully!");
+    navi("/home");
+    setImg("");
+    setPreview("");
+  } catch (err) {
+    console.error("Error:", err);
+    setMsg("❌ Something went wrong.");
   }
+}
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
