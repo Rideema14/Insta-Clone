@@ -1,51 +1,40 @@
 const express = require("express");
 const Upload = require("../models/uploadModel");
+const auth = require("../middleware/auth"); // only if using auth
+const router = express.Router();
 
-const upload = express.Router();
-
-upload.post("/upload", async (req, res) => {
+// Only logged-in users can upload
+router.post("/upload", auth, async (req, res) => {
   try {
-    const { imageUrl, username } = req.body;
+    const { imageUrl } = req.body;
 
     if (!imageUrl) {
       return res.status(400).json({ message: "Image URL is required" });
     }
 
-    if (!username) {
-      return res.status(400).json({ message: "Username is required" });
-    }
-
-    const uploadInstance = new Upload({
+    const saved = await Upload.create({
       imageUrl,
-      username
+      username: req.user.username  // from JWT
     });
-
-    const saved = await uploadInstance.save();
 
     res.json({
       success: true,
-      message: "Image URL stored successfully",
+      message: "Image uploaded successfully",
       data: saved
     });
 
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Server Error" });
   }
 });
 
-
-
-upload.get("/uploaded", async(req, res)=>{
+router.get("/uploaded", async (req, res) => {
   try {
-      const images = await Upload.find();
-      return res.json(images);  
+    const list = await Upload.find();
+    res.json(list);
   } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error" });
   }
 });
 
-
-module.exports = upload;   
-
+module.exports = router;   // VERY IMPORTANT
