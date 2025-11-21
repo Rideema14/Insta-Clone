@@ -1,30 +1,57 @@
 const User = require("../models/userModel");
 const router = require("./user");
-let jwt =require('jsonwebtoken')
-let bcrypt=require('bcryptjs')
-router.post('/login', async(req,res)=>{
-    let loginData=req.body
-     let data=    await User.findOne({email:loginData.email})
-     console.log(data,"datata");
-     
-     if(data){
-                 let validPass=     await bcrypt.compare(loginData.passWord,data.passWord)
-                 if(validPass){
-                       let token=   jwt.sign({email:data.email,role:data.role},'jdsbfiuwhfiuwhfwuif',{expiresIn:'1h'})
-                       console.log(token);
-                       
-                   return res.status(200).json({token,data})
-                 }
-                 else{
-                    res.send('InvalidPssssss')
-                 }
-     }
-     else{
-        res.send('pahle account create kroooo')
-     }
+let jwt = require("jsonwebtoken");
+let bcrypt = require("bcryptjs");
 
+router.post("/login", async (req, res) => {
+  try {
+    const { email, passWord } = req.body;
 
-}
-)
+    if (!email || !passWord) {
+      return res.status(400).json({ message: "Email and password required" });
+    }
 
-module.exports=router
+    // Find user
+    const user = await User.findOne({ email });
+    console.log(user, "datata");
+
+    if (!user) {
+      return res.status(400).json({ message: "Account not found" });
+    }
+
+    // Compare password
+    const validPass = await bcrypt.compare(passWord, user.passWord);
+    if (!validPass) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+
+    // Correct token generation
+    const token = jwt.sign(
+      {
+        email: user.email,
+        role: user.role,
+        username: user.userName, // working now
+      },
+      "jdsbfiuwhfiuwhfwuif", // should be env variable ideally
+      { expiresIn: "1h" }
+    );
+
+    console.log(token);
+
+    return res.status(200).json({
+      token,
+      data: {
+        _id: user._id,
+        email: user.email,
+        userName: user.userName,
+        role: user.role,
+      },
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+module.exports = router;

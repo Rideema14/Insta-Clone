@@ -19,18 +19,33 @@ const Home = () => {
 
 const toggleLike = async (index, id) => {
   try {
-   
-    await axios.post(`http://localhost:3000/api/like/${id}`);
-
-    setPosts((prevPosts) =>
-      prevPosts.map((post, i) =>
-        i === index ? { ...post, likes: (post.likes || 0) + 1 } : post
-      )
+    const res = await axios.post(
+      `http://localhost:3000/api/like/${id}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
     );
+
+    if (res.data.success) {
+      setPosts(prev =>
+        prev.map((post, i) =>
+          i === index
+            ? { ...post, likeCount: (post.likeCount || 0) + 1 }
+            : post
+        )
+      );
+    } else {
+      console.log("Already liked");
+    }
+
   } catch (err) {
     console.error("Error liking post:", err);
   }
 };
+
 const logout = () => {
   localStorage.removeItem("authToken");
   localStorage.removeItem("username");

@@ -9,6 +9,10 @@ const uploadSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+   likedBy: {
+    type: [String],
+    default: []
+  },
    username: { 
     type: String, 
     required: false }

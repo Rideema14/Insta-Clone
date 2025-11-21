@@ -23,26 +23,33 @@ const Login = () => {
     });
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+ async function handleSubmit(e) {
+  e.preventDefault();
 
-    try {
-      const res = await axios.post("http://localhost:3000/api/login", formData);
-      const token = res.data;
-      console.log(res ,"fffff");
-      // ✅ Save token in localStorage
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("userData", JSON.stringify(res.data.data));
-
-      setErrorMsg("");
-      navigate("/home");
-      localStorage.setItem("username", res.data.data.userName);
-
- // ✅ Login success
-    } catch (err) {
-      setErrorMsg("Invalid email or password");
-    }
+  // ❗ FRONTEND VALIDATION
+  if (!formData.email.trim() || !formData.passWord.trim()) {
+    setErrorMsg("Email and password required");
+    return;
   }
+
+  try {
+    const res = await axios.post("http://localhost:3000/api/login", formData);
+
+    // backend returns => { token, data }
+    const token = res.data.token;
+
+    // ❗ Save token correctly
+    localStorage.setItem("authToken", token);
+    localStorage.setItem("userData", JSON.stringify(res.data.data));
+
+    setErrorMsg("");
+    navigate("/home");
+
+  } catch (err) {
+    setErrorMsg("Invalid email or password");
+  }
+}
+
 
   return (
     <div className="bg-black h-screen flex justify-center items-center">
