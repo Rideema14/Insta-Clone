@@ -1,3 +1,4 @@
+// middleware/auth.js
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res, next) => {
@@ -7,13 +8,19 @@ module.exports = (req, res, next) => {
     return res.status(401).json({ message: "No token provided" });
   }
 
-  const token = authHeader.split(" ")[1];
-  
+  const parts = authHeader.split(" ");
+
+  if (parts.length !== 2 || parts[0] !== "Bearer") {
+    return res.status(401).json({ message: "Invalid token format" });
+  }
+
+  const token = parts[1];
+
   try {
-    const decoded = jwt.verify(token, "jdsbfiuwhfiuwhfwuif");
-    req.user = decoded; // <-- Very important
+    const decoded = jwt.verify(token, "jdsbfiuwhfiuwhfwuif");  // same secret used at login
+    req.user = decoded;
     next();
-  } catch (err) {
+  } catch (error) {
     return res.status(401).json({ message: "Invalid token" });
   }
 };

@@ -2,23 +2,29 @@ const jwt = require("jsonwebtoken");
 
 module.exports = function (req, res, next) {
   try {
-    const authHeader = req.header("Authorization");
+    const authHeader = req.headers.authorization;
+    console.log("----- VERIFY DEBUG -----");
+    console.log("AUTH HEADER =", authHeader);
 
     if (!authHeader) {
-      return res.status(401).json({ message: "Access denied. No token." });
+      return res.status(401).json({ message: "No token provided" });
     }
 
-    const token = authHeader.split(" ")[1]; // Bearer tokenString
+    // declare token BEFORE using
+    const token = authHeader.split(" ")[1];
 
     if (!token) {
-      return res.status(401).json({ message: "Token missing." });
+      return res.status(401).json({ message: "Token missing after Bearer" });
     }
 
-    const verified = jwt.verify(token, "insta");  // same secret used in login
-    req.user = verified;
+    // verify token
+    const verified = jwt.verify(token, "jdsbfiuwhfiuwhfwuif");
 
+    req.user = verified; // contains id, email, role
     next();
+
   } catch (err) {
-    res.status(400).json({ message: "Invalid Token" });
+     console.error("VERIFY ERROR:", err);
+     return res.status(400).json({ message: "Invalid token" });
   }
 };

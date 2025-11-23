@@ -11,32 +11,28 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "Email and password required" });
     }
 
-    // Find user
     const user = await User.findOne({ email });
-    console.log(user, "datata");
 
     if (!user) {
       return res.status(400).json({ message: "Account not found" });
     }
 
-    // Compare password
     const validPass = await bcrypt.compare(passWord, user.passWord);
     if (!validPass) {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    // Correct token generation
+    // ✅ FIXED TOKEN
     const token = jwt.sign(
       {
+        id: user._id,            // <-- THIS WAS MISSING
         email: user.email,
         role: user.role,
-        username: user.userName, // working now
+        username: user.userName,
       },
-      "jdsbfiuwhfiuwhfwuif", // should be env variable ideally
+      "jdsbfiuwhfiuwhfwuif",
       { expiresIn: "1h" }
     );
-
-    console.log(token);
 
     return res.status(200).json({
       token,
