@@ -1,8 +1,9 @@
 import Logo from "./assets/logo.png";
 import Me from "./assets/me.jpg";
-import { Link } from "react-router-dom";
+import { Link ,useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import LogoutIcon from '@mui/icons-material/Logout';
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const username = localStorage.getItem("username");
@@ -19,33 +20,29 @@ const Home = () => {
 
 const toggleLike = async (index, id) => {
   try {
+    const authToken = localStorage.getItem("authToken");
+
     const res = await axios.post(
       `http://localhost:3000/api/like/${id}`,
       {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
+      { headers: { Authorization: `Bearer ${authToken}` } }
     );
 
-    if (res.data.success) {
-      setPosts(prev =>
-        prev.map((post, i) =>
-          i === index
-            ? { ...post, likeCount: (post.likeCount || 0) + 1 }
-            : post
-        )
-      );
-    } else {
-      console.log("Already liked");
-    }
+    setPosts(prev =>
+      prev.map((p, i) =>
+        i === index
+          ? { ...p, likeCount: res.data.likeCount, isLiked: res.data.isLiked }
+          : p
+      )
+    );
 
   } catch (err) {
-    console.error("Error liking post:", err);
+    console.log("Error toggling like:", err);
   }
 };
 
+
+let navigate = useNavigate();
 const logout = () => {
   localStorage.removeItem("authToken");
   localStorage.removeItem("username");
@@ -113,9 +110,9 @@ const logout = () => {
             </span>
           </div>
           <div className=" mt-1  flex gap-6">
-            <i className=" ml-7  text-2xl  text-white fa-solid fa-shapes"></i>
+            <LogoutIcon className=" ml-7  text-2xl  text-white cursor-pointer" onClick={logout} />
             <span>
-              <p className="text-white text-xl">Also from meta</p>
+              <p className="text-white text-xl">Logout</p>
             </span>
           </div>
         </div>
@@ -198,9 +195,10 @@ const logout = () => {
               />
              <i
             onClick={() => toggleLike(index, item._id)}
-            className=" absolute bottom-22.5 left-3.5 text-2xl fa-solid fa-heart text-red-600 cursor-pointer transition-all duration-300"></i>
+            className={`absolute bottom-22.5 left-3.5 text-2xl fa-regular fa-heart cursor-pointer transition-all duration-300" ${
+    item.isLiked ? "fa-solid fa-heart text-red-600" : "text-white"}`}></i>
              <span className= " absolute bottom-17 left-3.5 text-l text-white ">
-                 {item.likes || 0} likes
+                 {item.likeCount ?? 0} likes
            </span>
         <i className="absolute text-2xl bottom-22 left-13  text-white fa-regular fa-comment"></i>
         <i className=" absolute bottom-22 left-22.5 text-2xl fa-regular fa-paper-plane text-white cursor-pointer transition-all duration-300"></i>

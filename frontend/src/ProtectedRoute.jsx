@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute({ children }) {
   const token = localStorage.getItem("authToken");
-
+ console.log("ProtectedRoute token:", token);
   // if token does NOT exist → redirect
   if (!token) {
     return <Navigate to="/" replace />;

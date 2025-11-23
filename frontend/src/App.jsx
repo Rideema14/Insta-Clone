@@ -15,7 +15,7 @@ function App() {
          <Route path="/signup" element={<Signup />} />
          <Route path="/home" element={ <ProtectedRoute><Home/></ProtectedRoute>}/>
          <Route path="/forgot-password" element={<ForgotPassword/>}/>
-         <Route path="/reset-password/:token" element={<ProtectedRoute><ResetPassword/></ProtectedRoute>}/>
+         <Route path="/reset-password/:token" element={<ResetPassword/>}/>
          <Route path="/post" element={<ProtectedRoute><Post/></ProtectedRoute>}/>
        </Routes>
       

@@ -34,9 +34,8 @@ const UploadImage = () => {
 
     try {
       const fileName = `${Date.now()}-${img.name}`;
-      const bucket = "post_images"; // 🔥 CORRECT BUCKET NAME
+      const bucket = "post_images"; 
 
-      // First → Save link + username in your MongoDB backend
       await axios.post(
         "http://localhost:3000/api/upload",
         {
