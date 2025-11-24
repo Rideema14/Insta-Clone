@@ -1,9 +1,10 @@
 import Logo from "./assets/logo.png";
 import Me from "./assets/me.jpg";
-import { Link ,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import LogoutIcon from '@mui/icons-material/Logout';
+import LogoutIcon from "@mui/icons-material/Logout";
+import SendIcon from '@mui/icons-material/Send';
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const username = localStorage.getItem("username");
@@ -18,36 +19,65 @@ const Home = () => {
       .catch((err) => console.log(err));
   }, []);
 
-const toggleLike = async (index, id) => {
-  try {
-    const authToken = localStorage.getItem("authToken");
+  const toggleLike = async (index, id) => {
+    try {
+      const authToken = localStorage.getItem("authToken");
 
+      const res = await axios.post(
+        `http://localhost:3000/api/like/${id}`,
+        {},
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      );
+
+      setPosts((prev) =>
+        prev.map((p, i) =>
+          i === index
+            ? { ...p, likeCount: res.data.likeCount, isLiked: res.data.isLiked }
+            : p
+        )
+      );
+    } catch (err) {
+      console.log("Error toggling like:", err);
+    }
+  };
+ const [suggestedUsers, setSuggestedUsers] = useState([
+  { id: "6923c525c99183f485cebea4", username: "Priyal", following: false, avatar: "/ppl1.png" },
+  { id: "6923c525c99183f485cebea5", username: "Hey", following: false, avatar: "/ppl2.png" },
+  { id: "6923c525c99183f485cebea6", username: "Grave", following: false, avatar: "/ppl3.png" },
+]);
+
+
+  const toggleFollow = async (userId) => {
+  try {
+    const token = localStorage.getItem("authToken");
+
+    // Make POST request to follow/unfollow endpoint
     const res = await axios.post(
-      `http://localhost:3000/api/like/${id}`,
+      `http://localhost:3000/api/follow/${userId}`,
       {},
-      { headers: { Authorization: `Bearer ${authToken}` } }
+      { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    setPosts(prev =>
-      prev.map((p, i) =>
-        i === index
-          ? { ...p, likeCount: res.data.likeCount, isLiked: res.data.isLiked }
-          : p
+    // Update the local state for suggested users
+    setSuggestedUsers((prev) =>
+      prev.map((user) =>
+        user.id === userId ? { ...user, following: res.data.following } : user
       )
     );
-
   } catch (err) {
-    console.log("Error toggling like:", err);
+    console.log("Follow/Unfollow error:", err);
   }
 };
 
 
-let navigate = useNavigate();
-const logout = () => {
-  localStorage.removeItem("authToken");
-  localStorage.removeItem("username");
-  navigate("/");
-};
+
+  const navigate = useNavigate();
+  const logout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("username");
+    navigate("/");
+  };
+
   return (
     <div className="bg-black  flex flex-row ">
       <div className="  w-94  border-1 border-gray-800">
@@ -110,7 +140,10 @@ const logout = () => {
             </span>
           </div>
           <div className=" mt-1  flex gap-6">
-            <LogoutIcon className=" ml-7  text-2xl  text-white cursor-pointer" onClick={logout} />
+            <LogoutIcon
+              className=" ml-7  text-2xl  text-white cursor-pointer"
+              onClick={logout}
+            />
             <span>
               <p className="text-white text-xl">Logout</p>
             </span>
@@ -171,82 +204,87 @@ const logout = () => {
         </div>
         <div className="ml-[140px] w-[480px] h-[520px] flex flex-col gap-3 overflow-y-scroll scrollbar-hide whitespace-nowrap">
           {posts.map((item, index) => (
-           
             <div
               key={index}
               className="relative w-[400px] h-[520px] flex-shrink-0"
             >
-                {/* USERNAME DISPLAY */}
- 
-  <div className="text-white text-md font-bold absolute top-0  bg-[url('/unknown.png')]  bg-cover  h-[30px] w-[30px] rounded-[50%] ">
-         <p className="ml-9 top-3">{username || "Unknown"}</p> </div>
+              {/* USERNAME DISPLAY */}
 
+              <div className="text-white text-md font-bold absolute top-0  bg-[url('/unknown.png')]  bg-cover  h-[30px] w-[30px] rounded-[50%] ">
+                <p className="ml-9 top-3">{username || "Unknown"}</p>{" "}
+              </div>
 
               {/* <img
                 className="absolute w-[400px] h-[520px] rounded-[40px]"
                 src={post}
                 alt="Post"
               /> */}
-  
+
               <img
                 className="mt-11 absolute w-[400px] h-[350px]"
                 src={item?.imageUrl}
                 alt="Post"
               />
-             <i
-            onClick={() => toggleLike(index, item._id)}
-            className={`absolute bottom-22.5 left-3.5 text-2xl fa-regular fa-heart cursor-pointer transition-all duration-300" ${
-    item.isLiked ? "fa-solid fa-heart text-red-600" : "text-white"}`}></i>
-             <span className= " absolute bottom-17 left-3.5 text-l text-white ">
-                 {item.likeCount ?? 0} likes
-           </span>
-        <i className="absolute text-2xl bottom-22 left-13  text-white fa-regular fa-comment"></i>
-        <i className=" absolute bottom-22 left-22.5 text-2xl fa-regular fa-paper-plane text-white cursor-pointer transition-all duration-300"></i>
-        <i className=" absolute bottom-22.5 right-3.5 text-2xl fa-regular fa-bookmark text-white cursor-pointer transition-all duration-300"></i>
+              <i
+                onClick={() => toggleLike(index, item._id)}
+                className={`absolute bottom-22.5 left-3.5 text-2xl fa-regular fa-heart cursor-pointer transition-all duration-300" ${
+                  item.isLiked ? "fa-solid fa-heart text-red-600" : "text-white"
+                }`}
+              ></i>
+              <span className=" absolute bottom-17 left-3.5 text-l text-white ">
+                {item.likeCount ?? 0} likes
+              </span>
+              <i className="absolute text-2xl bottom-22 left-13  text-white fa-regular fa-comment"></i>
+            <SendIcon className="absolute bottom-22.5 left-22.5 text-3xl text-white 
+             cursor-pointer transition-all duration-300 
+             rotate-[-40deg] hover:scale-110"
+/>
+
+              <i className=" absolute bottom-22.5 right-3.5 text-2xl fa-regular fa-bookmark text-white cursor-pointer transition-all duration-300"></i>
             </div>
-          )
-          )}
+          ))}
         </div>
       </div>
-      <div className=" w-96 ">
-        <div className="flex gap-1">
-          <img
-            src={Me}
-            className=" m-4 h-[50px] w-[50px] rounded-full flex-shrink-0 object-cover"
-          />
+       <div className="flex flex-col p-4 w-[300px] bg-black text-white">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-3">
+          <img src={Me} alt="Profile" className="h-12 w-12 rounded-full" />
           <div className="flex flex-col">
-            <p className="mt-5 text-white">Rideema.singh</p>
-            <p className=" text-white">Ri🍁</p>
-          </div>
-          <p className="mt-5 ml-4 text-blue-500">switch</p>
-        </div>
-        <div className=" ml-[20px] text-gray-300 text-sm">
-          Suggested for you &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
-          &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; See All
-        </div>
-        <div className=" ml-[10px] mt-[10px] flex flex-col gap-1.5">
-          <div className="  bg-[url('/ppl1.png')] bg-cover  h-[55px] w-[55px] rounded-[50%] flex-shrink-0 flex flex-row">
-            <p className=" ml-[80px] mt-4 text-white">priyal.patel__30</p>
-            <p className=" text-sm ml-[70px] mt-4 text-blue-500">Follow</p>{" "}
-          </div>
-          <div className="  bg-[url('/ppl2.png')] bg-cover h-[55px] w-[55px] rounded-[50%] flex-shrink-0 flex flex-row">
-            <p className="ml-[80px] mt-4 text-white">itsme_hey</p>
-            <p className=" text-sm ml-[108px] mt-4 text-blue-500">Follow</p>
-          </div>
-          <div className="   bg-[url('/ppl3.png')] bg-cover  bg-center h-[55px] w-[55px] rounded-[50%] flex-shrink-0 flex flex-row">
-            <p className="ml-[80px] mt-4 text-white">ridzgraveyard.10</p>
-            <p className=" text-sm ml-[60px] mt-4 text-blue-500">Follow</p>
-          </div>
-          <div className="  bg-[url('/ppl4.png')] bg-cover h-[55px] w-[55px] rounded-[50%] flex-shrink-0 flex flex-row">
-            <p className="ml-[80px] mt-4 text-white">itsmeaanyarai</p>
-            <p className=" text-sm ml-[80px] mt-4 text-blue-500">Follow</p>
-          </div>
-          <div className="  bg-[url('/ppl5.png')] bg-cover h-[55px] w-[55px] rounded-[50%] flex-shrink-0 flex flex-row">
-            <p className="ml-[80px] mt-4 text-white">101_not_found</p>
-            <p className=" text-sm ml-[75px] mt-4 text-blue-500">Follow</p>
+            <p className="font-bold">Rideema.singh</p>
+            <p className="text-gray-400 text-sm">Ri🍁</p>
           </div>
         </div>
+        <p className="text-blue-500 cursor-pointer">Switch</p>
       </div>
+
+      {/* Suggested Users */}
+      <p className="text-gray-400 text-sm mb-2">Suggested for you</p>
+      <div className="flex flex-col gap-3">
+        
+        {suggestedUsers.map((user) => (
+          <div key={user.id} className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <img
+                src={user.avatar}
+                alt={user.username}
+                className="h-12 w-12 rounded-full"
+              />
+              <p className="text-white">{user.username}</p>
+            </div>
+            <button
+              onClick={() => toggleFollow(user.id)}
+              className={` ml-4 px-3 py-1 rounded text-sm ${
+                user.following
+                  ? "bg-gray-600 text-white"
+                  : "bg-blue-500 text-white"
+              }`}
+            >
+              {user.following ? "Following" : "Follow"}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
     </div>
   );
 };
