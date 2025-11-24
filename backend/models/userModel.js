@@ -19,6 +19,8 @@ let mongoose=     require('mongoose')
     },
     resetToken: String,
   resetTokenExpiry: Date,
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
 })
 
 let User=  mongoose.model('user',userSchema)

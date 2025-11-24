@@ -6,6 +6,9 @@ let forgetRouter=require('./router/forget')
 let resetRouter=require('./router/reset')
 let uploadRouter=require('./router/upload')
 let likeRouter=require('./router/likecount')
+let followRouter = require("./router/follow");
+
+
 let cors=   require('cors');
 
 
@@ -21,6 +24,7 @@ app.use('/api',forgetRouter)
 app.use('/api',resetRouter) 
 app.use('/api',uploadRouter)
 app.use('/api',likeRouter)
+app.use('/api', followRouter);
 
 
 

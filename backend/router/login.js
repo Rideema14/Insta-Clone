@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
         username: user.userName,
       },
       "jdsbfiuwhfiuwhfwuif",
-      { expiresIn: "1h" }
+      { expiresIn: "7d" }
     );
 
     return res.status(200).json({
