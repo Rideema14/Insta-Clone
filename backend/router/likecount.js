@@ -13,12 +13,8 @@ like.post("/like/:id", verify, async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-
-    // Clean array (remove nulls)
     post.likedBy = post.likedBy.filter(u => u !== null);
-
     const alreadyLiked = post.likedBy.includes(userId);
-
     if (alreadyLiked) {
       // UNLIKE
       post.likeCount = Math.max(0, post.likeCount - 1);
@@ -26,13 +22,11 @@ like.post("/like/:id", verify, async (req, res) => {
       await post.save();
 
       return res.json({
-  success: true,
-  isLiked: false,
-  likeCount: post.likeCount
-});
-
-    }
-
+          success: true,
+          isLiked: false,
+          likeCount: post.likeCount
+        });
+      }
     // LIKE
     post.likeCount += 1;
     post.likedBy.push(userId);
@@ -42,8 +36,7 @@ like.post("/like/:id", verify, async (req, res) => {
   success: true,
   isLiked: true,
   likeCount: post.likeCount
-});
-
+  });
 
   } catch (error) {
     console.log(error);

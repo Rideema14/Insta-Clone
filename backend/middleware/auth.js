@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
   const token = parts[1];
 
   try {
-    const decoded = jwt.verify(token, "jdsbfiuwhfiuwhfwuif");  // same secret used at login
+    const decoded = jwt.verify(token, "jdsbfiuwhfiuwhfwuif");  
     req.user = decoded;
     next();
   } catch (error) {

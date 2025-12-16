@@ -4,7 +4,7 @@ const verify = require("../middleware/verifyToken");
 
 const router = express.Router();
 
-// Follow/unfollow toggle
+
 router.post("/follow/:id", verify, async (req, res) => {
   try {
     const targetId = req.params.id;

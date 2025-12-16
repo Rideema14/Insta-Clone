@@ -15,7 +15,15 @@ const uploadSchema = new mongoose.Schema({
   },
    username: { 
     type: String, 
-    required: false }
+    required: false },
+    comments: [
+  {
+    username: String,
+    text: String,
+    createdAt: { type: Date, default: Date.now }
+  }
+]
+
 });
 
 module.exports = mongoose.model("Upload", uploadSchema);

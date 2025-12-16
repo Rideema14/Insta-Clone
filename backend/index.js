@@ -7,8 +7,8 @@ let resetRouter=require('./router/reset')
 let uploadRouter=require('./router/upload')
 let likeRouter=require('./router/likecount')
 let followRouter = require("./router/follow");
-
-
+let searchRouter = require("./router/search");
+let commentRouter = require("./router/comment");
 let cors=   require('cors');
 
 
@@ -25,7 +25,8 @@ app.use('/api',resetRouter)
 app.use('/api',uploadRouter)
 app.use('/api',likeRouter)
 app.use('/api', followRouter);
-
+app.use('/api', searchRouter);
+app.use('/api', commentRouter);
 
 
 
