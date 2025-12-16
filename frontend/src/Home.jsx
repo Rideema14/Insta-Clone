@@ -8,6 +8,10 @@ import SendIcon from '@mui/icons-material/Send';
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const username = localStorage.getItem("username");
+const [commentText, setCommentText] = useState("");
+const [showComments, setShowComments] = useState(null); 
+
+
 
   useEffect(() => {
     axios
@@ -40,6 +44,32 @@ const Home = () => {
       console.log("Error toggling like:", err);
     }
   };
+
+const addComment = async (postId) => {
+  try {
+    const token = localStorage.getItem("authToken");
+
+    const res = await axios.post(
+      `http://localhost:3000/api/comment/${postId}`,
+      { text: commentText },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Update comments in the UI
+    setPosts(prev =>
+      prev.map(p =>
+        p._id === postId ? { ...p, comments: res.data } : p
+      )
+    );
+
+    setCommentText("");
+    setShowComments(null);
+    
+  } catch (err) {
+    console.log("Comment error:", err);
+  }
+};
+
  const [suggestedUsers, setSuggestedUsers] = useState([
   { id: "6923c525c99183f485cebea4", username: "Priyal", following: false, avatar: "/ppl1.png" },
   { id: "6923c525c99183f485cebea5", username: "Hey", following: false, avatar: "/ppl2.png" },
@@ -92,7 +122,9 @@ const Home = () => {
           <div className="flex gap-6">
             <i className=" ml-7 text-xl  text-white fa-solid fa-magnifying-glass"></i>
             <span>
-              <p className="text-white text-xl">Search</p>
+               <Link to="/search">
+                <p className="text-white text-xl">Search</p>
+              </Link>
             </span>
           </div>
           <div className="flex gap-6">
@@ -130,7 +162,9 @@ const Home = () => {
           <div className="flex gap-6">
             <i className=" ml-7 text-xl  text-white fa-solid fa-user"></i>
             <span>
-              <p className="text-white text-xl">Profile</p>
+              <Link to="/profile">
+                <p className="text-white text-xl">Profile</p>
+              </Link>
             </span>
           </div>
           <div className=" mt-15 flex gap-6">
@@ -202,7 +236,7 @@ const Home = () => {
             <p className="text-white mt-14 flex justify-center">User</p>
           </div>
         </div>
-        <div className="ml-[140px] w-[480px] h-[520px] flex flex-col gap-3 overflow-y-scroll scrollbar-hide whitespace-nowrap">
+        <div className="ml-[140px] w-[480px] h-[520px] flex flex-col gap-18 overflow-y-scroll scrollbar-hide whitespace-nowrap">
           {posts.map((item, index) => (
             <div
               key={index}
@@ -232,9 +266,52 @@ const Home = () => {
                 }`}
               ></i>
               <span className=" absolute bottom-17 left-3.5 text-l text-white ">
-                {item.likeCount ?? 0} likes
+                {item.likeCount ?? 0} like
               </span>
-              <i className="absolute text-2xl bottom-22 left-13  text-white fa-regular fa-comment"></i>
+            <i className="absolute text-2xl bottom-22 left-13 text-white fa-regular fa-comment"
+  onClick={() => setShowComments(item._id)}
+></i>
+<div className="  mt-115 absolute bg-[#000000] w-full rounded-b-2xl p-3 mt-4">
+  <div className="space-y-2 max-h-10 overflow-y-scroll scrollbar-hide">
+    {item.comments?.length === 0 && (
+      <p className="text-gray-500 text-sm">No comments yet.</p>
+    )}
+
+    {item.comments?.map((c, index) => (
+      <div key={index} className="flex gap-3 items-start ">
+        <div className="w-8 h-8 bg-gray-400 rounded-full flex-shrink-0" />
+        <div>
+          <p className="text-white text-sm">
+            <span className="font-semibold">user </span>{c.text}
+          </p>
+          <p className="text-xs text-gray-500">
+            {new Date(c.createdAt).toLocaleString()}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {/* Comment Input */}
+  <div className="mt-2 flex items-center gap-2">
+    <input
+      type="text"
+      placeholder="Add a comment..."
+      value={commentText}
+      onChange={(e) => setCommentText(e.target.value)}
+      className="flex-1 p-2 bg-[#303030] text-white rounded-full outline-none"
+    />
+    <button
+      onClick={() => addComment(item._id)}
+      className="text-blue-400 font-semibold"
+    >
+      Post
+    </button>
+  </div>
+
+</div>
+
+
             <SendIcon className="absolute bottom-22.5 left-22.5 text-3xl text-white 
              cursor-pointer transition-all duration-300 
              rotate-[-40deg] hover:scale-110"
