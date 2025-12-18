@@ -1,3 +1,4 @@
+require("dotenv").config();
 let express=   require('express');
 const connectDB = require('./config/db');
 let signUpRoute=require('./router/user')
@@ -10,8 +11,6 @@ let followRouter = require("./router/follow");
 let searchRouter = require("./router/search");
 let commentRouter = require("./router/comment");
 let cors=   require('cors');
-
-
 
 let app=  express()
 app.use(cors());
