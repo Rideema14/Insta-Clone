@@ -28,8 +28,3 @@ app.use('/api', searchRouter);
 app.use('/api', commentRouter);
 
 
-
-app.listen(3000,()=>{
-    console.log('server running 3000');
-    
-})
