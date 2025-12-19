@@ -24,7 +24,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:3000/api/create", {
+      const res = await fetch("https://insta-clone-6ghn.onrender.com/api/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

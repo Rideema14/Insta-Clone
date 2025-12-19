@@ -37,7 +37,7 @@ const UploadImage = () => {
       const bucket = "post_images"; 
 
       await axios.post(
-        "http://localhost:3000/api/upload",
+        "https://insta-clone-6ghn.onrender.com/api/upload",
         {
           imageUrl: `${supabaseUrl}/storage/v1/object/public/${bucket}/insta_images/${fileName}`,
           username: JSON.parse(localStorage.getItem("userData")).userName

@@ -15,7 +15,7 @@ const [showComments, setShowComments] = useState(null);
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/uploaded")
+      .get("https://insta-clone-6ghn.onrender.com/api/uploaded")
       .then((res) => {
         console.log("Fetched Images:", res.data);
         setPosts(res.data);
@@ -28,7 +28,7 @@ const [showComments, setShowComments] = useState(null);
       const authToken = localStorage.getItem("authToken");
 
       const res = await axios.post(
-        `http://localhost:3000/api/like/${id}`,
+        `https://insta-clone-6ghn.onrender.com/api/like/${id}`,
         {},
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
@@ -50,7 +50,7 @@ const addComment = async (postId) => {
     const token = localStorage.getItem("authToken");
 
     const res = await axios.post(
-      `http://localhost:3000/api/comment/${postId}`,
+      `https://insta-clone-6ghn.onrender.com/api/comment/${postId}`,
       { text: commentText },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -83,7 +83,7 @@ const addComment = async (postId) => {
 
     // Make POST request to follow/unfollow endpoint
     const res = await axios.post(
-      `http://localhost:3000/api/follow/${userId}`,
+      `https://insta-clone-6ghn.onrender.com/api/follow/${userId}`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );

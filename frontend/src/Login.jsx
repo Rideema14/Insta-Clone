@@ -33,7 +33,7 @@ const Login = () => {
   }
 
   try {
-    const res = await axios.post("http://localhost:3000/api/login", formData);
+    const res = await axios.post("https://insta-clone-6ghn.onrender.com/api/login", formData);
 
     // backend returns => { token, data }
     const token = res.data.token;

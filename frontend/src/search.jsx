@@ -15,7 +15,7 @@ const Search = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/uploaded")
+      .get("https://insta-clone-6ghn.onrender.com/api/uploaded")
       .then((res) => {
         console.log("Fetched Images:", res.data);
         setPosts(res.data);
@@ -28,7 +28,7 @@ const Search = () => {
       const authToken = localStorage.getItem("authToken");
 
       const res = await axios.post(
-        `http://localhost:3000/api/like/${id}`,
+        `https://insta-clone-6ghn.onrender.com/api/like/${id}`,
         {},
         { headers: { Authorization: `Bearer ${authToken}` } }
       );
@@ -54,7 +54,7 @@ const Search = () => {
 
     try {
       const res = await axios.get(
-        `http://localhost:3000/api/search?q=${value}`
+        `https://insta-clone-6ghn.onrender.com/api/search?q=${value}`
       );
       setSearchResult(res.data);
     } catch (err) {
@@ -110,7 +110,7 @@ const Search = () => {
 
       // Make POST request to follow/unfollow endpoint
       const res = await axios.post(
-        `http://localhost:3000/api/follow/${userId}`,
+        `https://insta-clone-6ghn.onrender.com/api/follow/${userId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

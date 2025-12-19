@@ -15,7 +15,7 @@ const Profile = () => {
 
   useEffect(() => {
   axios
-    .get("http://localhost:3000/api/uploaded")
+    .get("https://insta-clone-6ghn.onrender.com/api/uploaded")
     .then((res) => {
       const allPosts = res.data;
 
