@@ -13,7 +13,16 @@ let commentRouter = require("./router/comment");
 let cors=   require('cors');
 
 let app=  express()
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://insta-clone-ochre.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+  })
+);
+app.options("*", cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 connectDB()
@@ -27,4 +36,6 @@ app.use('/api', followRouter);
 app.use('/api', searchRouter);
 app.use('/api', commentRouter);
 
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Server running on", PORT));
 
